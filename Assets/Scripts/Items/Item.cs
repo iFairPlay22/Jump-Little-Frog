@@ -25,7 +25,11 @@ public class Item : MonoBehaviour
             case InteractionType.NONE:
                 break;
             case InteractionType.PickUp:
-                Debug.Log("PickUp");
+                
+                // Add to the inventory and desable it afterwards  
+                FindObjectOfType<InteractionSystem>().PickUpItem(this.gameObject);
+                this.gameObject.SetActive(false);
+                
                 break;
             case InteractionType.Examine:
                 Debug.Log("Examine");
