@@ -16,6 +16,8 @@ public class InteractionSystem : MonoBehaviour
 
     [SerializeField]
     LayerMask detectionLayer;
+    
+    GameObject _detectedObject;
 
     [Header("Debug")]
 
@@ -29,7 +31,13 @@ public class InteractionSystem : MonoBehaviour
     void Update()
     {
         if (InteractInput() && DetectObject())
-                Debug.Log("Interaction!");
+        {
+            Item item = _detectedObject.GetComponent<Item>();
+            if (item)
+            {
+                item.Interact();
+            }
+        }
     }
 
     private void OnDrawGizmos()
@@ -48,7 +56,14 @@ public class InteractionSystem : MonoBehaviour
 
     bool DetectObject()
     {
-        return Physics2D.OverlapCircle(detectionPoint.position, detectionRadius, detectionLayer);
+        Collider2D obj = Physics2D.OverlapCircle(detectionPoint.position, detectionRadius, detectionLayer);
+
+        if (obj != null)
+        {
+            _detectedObject = obj.gameObject;
+        }
+
+        return obj;
     }
 
     #endregion
