@@ -64,16 +64,18 @@ public class Fox : MonoBehaviour
     #endregion
 
     #region Inputs
-    float _horizontalInputValue = 0f;
-    bool _jumpInputValue = false;
+    float _moveInputValue = 0f;
+    bool _runInputValue = false;
     bool _crouchInputValue = false;
+    bool _jumpInputValue = false;
     #endregion
 
     #region Movement
-    [SerializeField] bool _isRunning = false;
     [SerializeField] bool _facingRight = true;
     [SerializeField] bool _isGrounded = false;
+    [SerializeField] bool _isRunning = false;
     [SerializeField] bool _isCrouching = false;
+    [SerializeField] bool _isJumping = false;
     #endregion
 
     #endregion
@@ -90,13 +92,13 @@ public class Fox : MonoBehaviour
     void Update()
     {
         // Left or right arrow input (to move)
-        _horizontalInputValue = Input.GetAxisRaw("Horizontal");
+        _moveInputValue = Input.GetAxisRaw("Horizontal");
 
         // Shift input (to run)
         if (Input.GetKeyDown(KeyCode.LeftShift))
-            _isRunning = true;
+            _runInputValue = true;
         if (Input.GetKeyUp(KeyCode.LeftShift))
-            _isRunning = false;
+            _runInputValue = false;
 
         // Jump input (to jump)
         if (Input.GetButtonDown("Jump"))
@@ -112,23 +114,7 @@ public class Fox : MonoBehaviour
 
     }
 
-    void FixedUpdate()
-    {
-        GroundCheck();
-        _Move(_horizontalInputValue, _jumpInputValue, _crouchInputValue);
-    }
-
-    void GroundCheck()
-    {
-        _isGrounded = false;
-
-        // Check if the GroundCheckObject is colliding with other 2D colliders that are in the "Ground" Layer
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(groundCheckCollider.position, groundCheckRadius, groundLayerMask);
-        if (colliders.Length > 0)
-            _isGrounded = true;
-    }
-
-    private void OnDrawGizmos()
+    void OnDrawGizmos()
     {
         if (displayCollidersRange)
         {
@@ -139,55 +125,89 @@ public class Fox : MonoBehaviour
         }
     }
 
-    void _Move(float xDirectionInput, bool jump, bool crouch)
+    void FixedUpdate()
     {
-        #region Jump and crouch
+        _GroundCheck();
+        _Jump();
+        _Crouch();
+        _Move();
+    }
 
-        if (jump && crouch)
-            crouch = false;
-            
+    void _GroundCheck()
+    {
+        _isGrounded = false;
+
+        // Check if the GroundCheckObject is colliding with other 2D colliders that are in the "Ground" Layer
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(groundCheckCollider.position, groundCheckRadius, groundLayerMask);
+        if (colliders.Length > 0)
+            _isGrounded = true;
+    }
+    
+    void _Jump()
+    {
         if (_isGrounded)
         {
-            // If we are crouching and we want not to crouch again, we verify that we can
-            if (_isCrouching && !crouch)
-            {
-                bool rightOverlap = Physics2D.OverlapCircle(overHeadRightCheckCollider.position, overHeadCheckRadius, groundLayerMask);
-                bool leftOverlap = Physics2D.OverlapCircle(overHeadLeftCheckCollider.position, overHeadCheckRadius, groundLayerMask);
-                if (rightOverlap || leftOverlap)
-                    crouch = true;
-            }
-
-            _isCrouching = crouch;
-
-            // Crouch (update the colliders)
-            crouchingCheckCollider.enabled = crouch;
-            standingCheckCollider.enabled = !crouch;
-
             // Jump
-            if (jump)
+            if (_jumpInputValue)
             {
                 _isGrounded = false;
-                _rigidbody.AddForce(new Vector2(0f, jumpPower)); 
-                _animator.SetBool("jump", true);
+                _isJumping = true;
+                _rigidbody.AddForce(new Vector2(0f, jumpPower));
+            }
+            else
+            {
+                _isJumping = false;
+            }
+            _animator.SetBool("jump", _isJumping);
+        }
+    }
+
+    void _Crouch()
+    {
+        if (_isGrounded)
+        {
+            if (_isCrouching)
+            {
+                // If we are crouching and we want not to crouch again, we verify that we can
+                if (!_crouchInputValue)
+                {
+                    bool rightOverlap = Physics2D.OverlapCircle(overHeadRightCheckCollider.position, overHeadCheckRadius, groundLayerMask);
+                    bool leftOverlap = Physics2D.OverlapCircle(overHeadLeftCheckCollider.position, overHeadCheckRadius, groundLayerMask);
+                    _isCrouching = rightOverlap || leftOverlap;
+                }
             } else
             {
-                _animator.SetBool("jump", false);
+                _isCrouching =_crouchInputValue;
             }
+
+            // Crouch (update the colliders)
+            crouchingCheckCollider.enabled = _isCrouching;
+            standingCheckCollider.enabled = !_isCrouching;
+
+            _animator.SetBool("isCroutching", _isCrouching);
+        } else if (_isCrouching)
+        {
+            _isCrouching = false;
+            _animator.SetBool("isCroutching", _isCrouching);
         }
 
-        _animator.SetBool("isCroutching", _isCrouching);
+    }
 
-        #endregion
+    void _Move()
+    {
 
-        #region Move and run
+        #region Move
+
         // Move x
+        float xDirectionInput = _moveInputValue;
         float xVelocity = speed * xDirectionInput * Time.fixedDeltaTime;
 
         // Run x
+        _isRunning = !_isCrouching && !_isJumping && _isGrounded && _runInputValue && xDirectionInput != 0;
         if (_isRunning) xVelocity *= runningSpeedAmplifier;
 
         // Crouch x
-        if (crouch) xVelocity *= crouchingSpeedAmplifier;
+        if (_isCrouching) xVelocity *= crouchingSpeedAmplifier;
 
         // Fall y
         float yVelocity = _rigidbody.velocity.y;
@@ -195,18 +215,25 @@ public class Fox : MonoBehaviour
         Vector3 targetVelocity = new Vector2(xVelocity, yVelocity);
         _rigidbody.velocity = targetVelocity;
 
-        // Rotate
-        // If looking right and go to left, make a rotation
+        #endregion
+
+        #region Rotate
+
         if (_facingRight && xVelocity < 0)
         {
+            // If looking right and go to left, make a rotation
             transform.localScale = new Vector3(-1, 1, 1);
             _facingRight = false;
         } else if (!_facingRight && xVelocity > 0)
         {
+            // If looking left and go to right, make a rotation
             transform.localScale = new Vector3(1, 1, 1);
             _facingRight = true;
         }
 
+        #endregion
+
+        #region Animator
         // xVelocityVal : 0 (idle) / 1 (walk) / 2 (run)
         float xVelocityVal = 0;
         if (xDirectionInput != 0)
