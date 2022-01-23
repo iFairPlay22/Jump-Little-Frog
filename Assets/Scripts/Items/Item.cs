@@ -1,14 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+
 
 [RequireComponent(typeof(BoxCollider2D))]
 public class Item : MonoBehaviour
 {
-    public enum InteractionType { NONE, PickUp, Examine };
+    public enum InteractionType { NONE, PickUp };
 
     [SerializeField]
     InteractionType interactionType;
+    
+    [SerializeField]
+    UnityEvent custumEvent;
 
     //[SerializeField]
     private void Reset()
@@ -31,9 +36,8 @@ public class Item : MonoBehaviour
                 this.gameObject.SetActive(false);
                 
                 break;
-            case InteractionType.Examine:
-                Debug.Log("Examine");
-                break;
         }
+
+        custumEvent.Invoke();
     }
 }
