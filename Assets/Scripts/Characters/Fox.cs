@@ -59,7 +59,7 @@ public class Fox : MonoBehaviour
 
     [Header("Debug")]
     [SerializeField]
-    bool displayCollidersRange = false;
+    bool displayGizmos = false;
 
     #endregion
 
@@ -83,7 +83,7 @@ public class Fox : MonoBehaviour
     [SerializeField] bool _isRunning = false;
     [SerializeField] bool _isCrouching = false;
     [SerializeField] bool _isJumping = false;
-    [SerializeField] int _successiveJumps = 0;
+    int _successiveJumps = 0;
     #endregion
 
     #endregion
@@ -122,9 +122,11 @@ public class Fox : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        if (displayCollidersRange)
+        if (displayGizmos)
         {
             Gizmos.color = Color.red;
+
+            // Draw the detection colliders
             Gizmos.DrawSphere(overHeadRightCheckCollider.position, overHeadCheckRadius);
             Gizmos.DrawSphere(overHeadLeftCheckCollider.position, overHeadCheckRadius);
             Gizmos.DrawSphere(groundCheckCollider.position, groundCheckRadius);
