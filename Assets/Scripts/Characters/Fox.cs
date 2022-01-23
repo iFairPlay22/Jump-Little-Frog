@@ -17,9 +17,6 @@ public class Fox : MonoBehaviour
     [SerializeField]
     float crouchingSpeedAmplifier = 0.5f;
 
-    [SerializeField]
-    float jumpPower = 150;
-
     [Header("Stand")]
 
     [SerializeField]
@@ -30,6 +27,16 @@ public class Fox : MonoBehaviour
 
     [SerializeField]
     float groundCheckRadius = 0.02f;
+
+    [Header("Jump")]
+
+    [Range(0, 3)]
+    [SerializeField]
+    int maxSuccessiveJumps = 2;
+
+    [SerializeField]
+    [Range(1, 3)]
+    float jumpPower = 2.7f;
 
     [Header("Crouch")]
 
@@ -76,6 +83,7 @@ public class Fox : MonoBehaviour
     [SerializeField] bool _isRunning = false;
     [SerializeField] bool _isCrouching = false;
     [SerializeField] bool _isJumping = false;
+    [SerializeField] int _successiveJumps = 0;
     #endregion
 
     #endregion
@@ -103,8 +111,6 @@ public class Fox : MonoBehaviour
         // Jump input (to jump)
         if (Input.GetButtonDown("Jump"))
             _jumpInputValue = true;
-        if (Input.GetButtonUp("Jump"))
-            _jumpInputValue = false;
 
         // Crouch input (to crouch)
         if (Input.GetButtonDown("Crouch"))
@@ -145,21 +151,22 @@ public class Fox : MonoBehaviour
     
     void _Jump()
     {
-        if (_isGrounded)
+        // Jump
+        if (_jumpInputValue && _successiveJumps != maxSuccessiveJumps)
         {
-            // Jump
-            if (_jumpInputValue)
-            {
-                _isGrounded = false;
-                _isJumping = true;
-                _rigidbody.AddForce(new Vector2(0f, jumpPower));
-            }
-            else
-            {
-                _isJumping = false;
-            }
-            _animator.SetBool("jump", _isJumping);
+            _isGrounded = false;
+            _isJumping = true;
+            _successiveJumps++;
+            _rigidbody.velocity = Vector3.up * jumpPower;
+            _jumpInputValue = false;
         }
+        
+        if (_isGrounded) {
+            _successiveJumps = 0;
+            _isJumping = false;
+        }
+
+        _animator.SetBool("jump", _isJumping);
     }
 
     void _Crouch()

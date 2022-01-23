@@ -483,10 +483,11 @@ MonoBehaviour:
   speed: 50
   runningSpeedAmplifier: 2
   crouchingSpeedAmplifier: 0.5
-  jumpPower: 150
+  jumpPower: 2.7
   standingCheckCollider: {fileID: 174370293}
   groundCheckCollider: {fileID: 1088659842}
   groundCheckRadius: 0.02
+  maxSuccessiveJumps: 2
   crouchingCheckCollider: {fileID: 174370296}
   overHeadLeftCheckCollider: {fileID: 258169823}
   overHeadRightCheckCollider: {fileID: 1427881625}
@@ -495,10 +496,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   displayCollidersRange: 1
-  _isRunning: 0
   _facingRight: 1
   _isGrounded: 0
+  _isRunning: 0
   _isCrouching: 0
+  _isJumping: 0
+  _successiveJumps: 0
 --- !u!95 &174370295
 Animator:
   serializedVersion: 3
