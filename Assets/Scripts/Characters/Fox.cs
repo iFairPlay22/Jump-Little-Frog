@@ -202,10 +202,21 @@ public class Fox : MonoBehaviour
 
     }
 
+    bool _CanMove()
+    {
+        if (FindObjectOfType<InventorySystem>().IsActive())
+            return false;
+
+        return true;
+    }
+
     void _Move()
     {
 
         #region Move
+
+        if (!_CanMove())
+            return;
 
         // Move x
         float xDirectionInput = _moveInputValue;

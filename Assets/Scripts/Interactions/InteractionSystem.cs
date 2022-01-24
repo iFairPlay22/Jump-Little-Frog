@@ -19,9 +19,6 @@ public class InteractionSystem : MonoBehaviour
     
     GameObject _detectedObject;
 
-    [Header("Inventory")]
-    List<GameObject> _inventory = new List<GameObject>();
-
     [Header("Debug")]
 
     [SerializeField]
@@ -67,11 +64,6 @@ public class InteractionSystem : MonoBehaviour
         }
 
         return obj;
-    }
-
-    public void PickUpItem(GameObject go)
-    {
-        _inventory.Add(go);
     }
 
     #endregion
