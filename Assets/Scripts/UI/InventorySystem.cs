@@ -28,6 +28,9 @@ public class InventorySystem : MonoBehaviour
     [SerializeField]
     Text UiItemTitle;
 
+    [SerializeField]
+    Text UiItemDescription;
+
     #endregion
 
     #region Private fields
@@ -44,6 +47,18 @@ public class InventorySystem : MonoBehaviour
     public void PickUpItem(GameObject go)
     {
         _items.Add(go);
+        UpdateUI();
+    }
+
+    public void RemoveItem(GameObject go)
+    {
+        int id = _items.IndexOf(go);
+
+        if (id != -1)
+        {
+            _items.RemoveAt(id);
+            Destroy(go);
+        }
         UpdateUI();
     }
 
@@ -71,21 +86,31 @@ public class InventorySystem : MonoBehaviour
             UiItemsImages[i].sprite = _items[i].GetComponent<SpriteRenderer>().sprite;
             UiItemsImages[i].gameObject.SetActive(true);
         }
+
+        HideItem();
     }
 
     public void ShowItem(int id)
     {
         UiItemImage.sprite = UiItemsImages[id].sprite;
-        UiItemTitle.text = _items[id].name;
+        UiItemTitle.text = _items[id].GetComponent<Item>().GetItemName();
+        UiItemDescription.text = _items[id].GetComponent<Item>().GetItemDescription();
 
         UiItemImage.gameObject.SetActive(true);
         UiItemTitle.gameObject.SetActive(true);
+        UiItemDescription.gameObject.SetActive(true);
     }
 
     public void HideItem()
     {
         UiItemImage.gameObject.SetActive(false);
         UiItemTitle.gameObject.SetActive(false);
+        UiItemDescription.gameObject.SetActive(false);
+    }
+
+    public void ConsumeItem(int id)
+    {
+        _items[id].GetComponent<Item>().Consume();
     }
 
     #endregion

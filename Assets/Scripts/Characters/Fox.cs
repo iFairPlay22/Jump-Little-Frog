@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(SfxManager))]
 public class Fox : MonoBehaviour
 {
     #region Values
@@ -9,12 +12,15 @@ public class Fox : MonoBehaviour
     #region Serialize fields
     [Header("Speed")]
     [SerializeField]
-    float speed = 50;
+    [Range(200, 300)]
+    float speed = 250;
 
     [SerializeField]
-    float runningSpeedAmplifier = 2f;
+    [Range(1f, 3f)]
+    float runningSpeedAmplifier = 1.5f;
 
     [SerializeField]
+    [Range(0f, 1f)]
     float crouchingSpeedAmplifier = 0.5f;
 
     [Header("Stand")]
@@ -26,17 +32,18 @@ public class Fox : MonoBehaviour
     Transform groundCheckCollider;
 
     [SerializeField]
-    float groundCheckRadius = 0.02f;
+    [Range(0f, 0.2f)]
+    float groundCheckRadius = 0.1f;
 
     [Header("Jump")]
 
-    [Range(0, 3)]
     [SerializeField]
+    [Range(0, 3)]
     int maxSuccessiveJumps = 2;
 
     [SerializeField]
-    [Range(1, 3)]
-    float jumpPower = 2.7f;
+    [Range(5, 10)]
+    float jumpPower = 7.5f;
 
     [Header("Crouch")]
 
@@ -50,12 +57,18 @@ public class Fox : MonoBehaviour
     Transform overHeadRightCheckCollider;
 
     [SerializeField]
-    float overHeadCheckRadius = 0.02f;
+    [Range(0f, 0.2f)]
+    float overHeadCheckRadius = 0.1f;
 
     [Header("Layer")]
 
     [SerializeField]
     LayerMask groundLayerMask;
+
+    [Header("SFX")]
+
+    [SerializeField]
+    AudioClip jumpAudioClip;
 
     [Header("Debug")]
     [SerializeField]
@@ -68,6 +81,7 @@ public class Fox : MonoBehaviour
     #region Components
     Rigidbody2D _rigidbody;
     Animator _animator;
+    SfxManager _sfxManager;
     #endregion
 
     #region Inputs
@@ -95,6 +109,7 @@ public class Fox : MonoBehaviour
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
+        _sfxManager = GetComponent<SfxManager>();
     }
 
     void Update()
@@ -135,6 +150,9 @@ public class Fox : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!_CanMove())
+            return;
+
         _GroundCheck();
         _Jump();
         _Crouch();
@@ -154,12 +172,15 @@ public class Fox : MonoBehaviour
     void _Jump()
     {
         // Jump
-        if (_jumpInputValue && _successiveJumps != maxSuccessiveJumps)
-        {
-            _isGrounded = false;
-            _isJumping = true;
-            _successiveJumps++;
-            _rigidbody.velocity = Vector3.up * jumpPower;
+        if (_jumpInputValue) {
+            if (_successiveJumps != maxSuccessiveJumps)
+            {
+                _isGrounded = false;
+                _isJumping = true;
+                _successiveJumps++;
+                _rigidbody.velocity = Vector3.up * jumpPower;
+                _sfxManager.Play(jumpAudioClip);
+            }
             _jumpInputValue = false;
         }
         
@@ -214,9 +235,6 @@ public class Fox : MonoBehaviour
     {
 
         #region Move
-
-        if (!_CanMove())
-            return;
 
         // Move x
         float xDirectionInput = _moveInputValue;

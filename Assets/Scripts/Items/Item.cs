@@ -7,13 +7,31 @@ using UnityEngine.Events;
 [RequireComponent(typeof(BoxCollider2D))]
 public class Item : MonoBehaviour
 {
-    public enum InteractionType { NONE, PickUp };
+    public enum ItemTypes { Static, Consumable };
+
+    [Header("Type")]
 
     [SerializeField]
-    InteractionType interactionType;
-    
+    string ItemName;
+
     [SerializeField]
-    UnityEvent custumEvent;
+    string ItemDescription;
+
+    [SerializeField]
+    ItemTypes ItemType;
+
+    [SerializeField]
+    UnityEvent ConsumeEvent;
+
+    public enum InteractionTypes { NONE, PickUp };
+
+    [Header("Interactions")]
+
+    [SerializeField]
+    InteractionTypes InteractionType;
+
+    [SerializeField]
+    UnityEvent CustumInteractionEvent;
 
     //[SerializeField]
     private void Reset()
@@ -22,14 +40,22 @@ public class Item : MonoBehaviour
         GetComponent<Collider2D>().isTrigger = true; 
         gameObject.layer = LayerMask.NameToLayer("Item");
     }
+    public string GetItemName()
+    {
+        return ItemName;
+    }
+    public string GetItemDescription()
+    {
+        return ItemDescription;
+    }
 
     public void Interact()
     {
-        switch (interactionType)
+        switch (InteractionType)
         {
-            case InteractionType.NONE:
+            case InteractionTypes.NONE:
                 break;
-            case InteractionType.PickUp:
+            case InteractionTypes.PickUp:
                 
                 // Add to the inventory and desable it afterwards  
                 FindObjectOfType<InventorySystem>().PickUpItem(this.gameObject);
@@ -38,6 +64,15 @@ public class Item : MonoBehaviour
                 break;
         }
 
-        custumEvent.Invoke();
+        CustumInteractionEvent.Invoke();
+    }
+
+    public void Consume()
+    {
+        if (ItemType == ItemTypes.Consumable)
+        {
+            ConsumeEvent.Invoke();
+            FindObjectOfType<InventorySystem>().RemoveItem(gameObject);
+        }
     }
 }
