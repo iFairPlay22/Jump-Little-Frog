@@ -116,6 +116,7 @@ public class Fox : MonoBehaviour
     {
         // Left or right arrow input (to move)
         _moveInputValue = Input.GetAxisRaw("Horizontal");
+        Debug.Log(_moveInputValue);
 
         // Shift input (to run)
         if (Input.GetKeyDown(KeyCode.LeftShift))
