@@ -21,11 +21,6 @@ public class FoxHealthBar : MonoBehaviour
     {
         _livesRemaining = Mathf.Max(_livesRemaining - 1, 0);
         _UpdateLifeUI();
-
-        if (_livesRemaining == 0)
-        {
-            FindObjectOfType<Fox>().Die();
-        }
     }
 
     public void IncreaseHealth()
@@ -48,6 +43,11 @@ public class FoxHealthBar : MonoBehaviour
 
     void _UpdateLifeUI()
     {
+        if (_livesRemaining == 0)
+        {
+            FindObjectOfType<Fox>().Die();
+        }
+
         LifeSlicedImage.fillAmount = ((float)_livesRemaining) / ((float)_maxLives);
     }
 
