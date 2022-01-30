@@ -45,6 +45,18 @@ public class Fox : MonoBehaviour
     [Range(5, 10)]
     float jumpPower = 7.5f;
 
+    [Header("Slice walls")]
+    [SerializeField]
+    [Range(0f, 5f)]
+    float slidingFactor = 3;
+
+    [SerializeField]
+    Transform wallCheckCollider;
+
+    [SerializeField]
+    [Range(0f, 0.2f)]
+    float wallCheckRadius = 0.1f;
+
     [Header("Crouch")]
 
     [SerializeField]
@@ -97,7 +109,12 @@ public class Fox : MonoBehaviour
     [SerializeField] bool _isRunning = false;
     [SerializeField] bool _isCrouching = false;
     [SerializeField] bool _isJumping = false;
+    [SerializeField] bool _isSliding = false;
     int _successiveJumps = 0;
+    #endregion
+
+    #region Other
+    bool _isDead = false;
     #endregion
 
     #endregion
@@ -142,6 +159,7 @@ public class Fox : MonoBehaviour
             Gizmos.color = Color.red;
 
             // Draw the detection colliders
+            Gizmos.DrawSphere(wallCheckCollider.position, wallCheckRadius);
             Gizmos.DrawSphere(overHeadRightCheckCollider.position, overHeadCheckRadius);
             Gizmos.DrawSphere(overHeadLeftCheckCollider.position, overHeadCheckRadius);
             Gizmos.DrawSphere(groundCheckCollider.position, groundCheckRadius);
@@ -150,13 +168,25 @@ public class Fox : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!_CanMove())
+        if (!_CanMoveOrInteract())
             return;
 
         _GroundCheck();
+        _SliceWallsCheck();
         _Jump();
         _Crouch();
         _Move();
+    }
+
+    bool _CanMoveOrInteract()
+    {
+        if (_isDead)
+            return false;
+
+        if (FindObjectOfType<InventorySystem>().IsActive())
+            return false;
+
+        return true;
     }
 
     void _GroundCheck()
@@ -169,6 +199,23 @@ public class Fox : MonoBehaviour
             _isGrounded = true;
     }
     
+    void _SliceWallsCheck()
+    {
+        bool wallsCollision = Physics2D.OverlapCircle(wallCheckCollider.transform.position, wallCheckRadius, groundLayerMask);
+        bool isFalling = _rigidbody.velocity.y < 0 && !_isGrounded;
+        bool wantToMove = _moveInputValue != 0;
+        bool isSliding = wallsCollision && wantToMove && isFalling;
+
+        if (isSliding)
+        {
+            _successiveJumps = 1;
+            _isSliding = true;
+        } else
+        {
+            _isSliding = false;
+        }
+    }
+
     void _Jump()
     {
         // Jump
@@ -223,14 +270,6 @@ public class Fox : MonoBehaviour
 
     }
 
-    bool _CanMove()
-    {
-        if (FindObjectOfType<InventorySystem>().IsActive())
-            return false;
-
-        return true;
-    }
-
     void _Move()
     {
 
@@ -249,6 +288,11 @@ public class Fox : MonoBehaviour
 
         // Fall y
         float yVelocity = _rigidbody.velocity.y;
+
+        if (_isSliding)
+        {
+            yVelocity = - slidingFactor;
+        }
         
         Vector3 targetVelocity = new Vector2(xVelocity, yVelocity);
         _rigidbody.velocity = targetVelocity;
@@ -287,6 +331,14 @@ public class Fox : MonoBehaviour
 
         #endregion
 
+    }
+
+    public void Die()
+    {
+        _isDead = true;
+        // TODO : Add particule system
+
+        FindObjectOfType<LevelManager>().Restart();
     }
 
     #endregion

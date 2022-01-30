@@ -152,6 +152,7 @@ public class EnemyAi : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
+            FindObjectOfType<FoxHealthBar>().ReduceHealth();
             Debug.Log("Collision between ennemy and player!");
         }
     }

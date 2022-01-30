@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HealthBar : MonoBehaviour
+public class FoxHealthBar : MonoBehaviour
 {
     [SerializeField]
     Image LifeSlicedImage;
@@ -21,11 +21,22 @@ public class HealthBar : MonoBehaviour
     {
         _livesRemaining = Mathf.Max(_livesRemaining - 1, 0);
         _UpdateLifeUI();
+
+        if (_livesRemaining == 0)
+        {
+            FindObjectOfType<Fox>().Die();
+        }
     }
 
     public void IncreaseHealth()
     {
         _livesRemaining = Mathf.Min(_livesRemaining + 1, _maxLives);
+        _UpdateLifeUI();
+    }
+
+    public void DestroyHealth()
+    {
+        _livesRemaining = 0;
         _UpdateLifeUI();
     }
 

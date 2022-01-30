@@ -14,6 +14,7 @@ public class TrapObject : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
+            FindObjectOfType<FoxHealthBar>().DestroyHealth();
             Debug.Log("Collision between trap object and player!");
         }
     }
