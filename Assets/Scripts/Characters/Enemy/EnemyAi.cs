@@ -6,6 +6,13 @@ using UnityEditor;
 [RequireComponent(typeof(BoxCollider2D))]
 public class EnemyAi : MonoBehaviour
 {
+
+    #region Variables
+
+    #region Movement
+
+    #region Serializable Fields
+
     [Header("Movement")]
     [SerializeField]
     List<Transform> Points = new List<Transform>();
@@ -18,17 +25,32 @@ public class EnemyAi : MonoBehaviour
     [Range(0.05f, 0.1f)]
     float sphereCollisionRadius = 0.075f;
 
+    #endregion
+
+    #region Private Fields
+
     int _nextPointId = 0;
 
     int _nextPointDirection = 1;
+
+    #endregion
+
+    #endregion
+
+
+    #region Debug
 
     [Header("Debug")]
     [SerializeField]
     bool DisplayGizmos = true;
 
+    #endregion
+
     private static GUIStyle GUIStyle = new GUIStyle();
 
-    Collider2D _collider;
+    #endregion
+
+    #region Movement
 
     void Reset()
     {
@@ -58,7 +80,6 @@ public class EnemyAi : MonoBehaviour
 
     void Awake()
     {
-        _collider = FindObjectOfType<Collider2D>();
         transform.position = Points[0].position;
         NextPoint();
 
@@ -122,4 +143,18 @@ public class EnemyAi : MonoBehaviour
 
         _nextPointId += _nextPointDirection;
     }
+
+    #endregion
+
+    #region Collisions
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Player")
+        {
+            Debug.Log("Collision between ennemy and player!");
+        }
+    }
+
+    #endregion
 }
