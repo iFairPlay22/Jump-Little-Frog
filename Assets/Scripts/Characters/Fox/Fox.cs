@@ -72,6 +72,15 @@ public class Fox : MonoBehaviour
     [Range(0f, 0.2f)]
     float overHeadCheckRadius = 0.1f;
 
+    [Header("Appear / Disappear")]
+    [SerializeField]
+    [Range(0f, 2f)]
+    float appearSpeedAnimation = 0.8f;
+
+    [SerializeField]
+    [Range(0f, 2f)]
+    float disappearSpeedAnimation = 0.8f;
+
     [Header("Layer")]
 
     [SerializeField]
@@ -104,6 +113,8 @@ public class Fox : MonoBehaviour
     #endregion
 
     #region Movement
+    private enum States { APPEARING, READY, DISAPPERING };
+    [SerializeField] States _state =  States.APPEARING;
     [SerializeField] bool _facingRight = true;
     [SerializeField] bool _isGrounded = false;
     [SerializeField] bool _isRunning = false;
@@ -111,10 +122,6 @@ public class Fox : MonoBehaviour
     [SerializeField] bool _isJumping = false;
     [SerializeField] bool _isSliding = false;
     int _successiveJumps = 0;
-    #endregion
-
-    #region Other
-    bool _isDead = false;
     #endregion
 
     #endregion
@@ -125,8 +132,13 @@ public class Fox : MonoBehaviour
     void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
-        _animator = GetComponent<Animator>();
         _sfxManager = GetComponent<SfxManager>();
+        _animator = GetComponent<Animator>();
+        _animator.SetFloat("appearAnimationSpeed", appearSpeedAnimation);
+        _animator.SetFloat("disappearAnimationSpeed", disappearSpeedAnimation);
+        _animator.SetBool("updateAnims", true);
+
+        StartCoroutine(Appear());
     }
 
     void Update()
@@ -180,7 +192,10 @@ public class Fox : MonoBehaviour
 
     bool _CanMoveOrInteract()
     {
-        if (_isDead)
+        if (_state == States.APPEARING)
+            return false;
+
+        if (_state == States.DISAPPERING)
             return false;
 
         if (FindObjectOfType<InventorySystem>().IsActive())
@@ -333,12 +348,26 @@ public class Fox : MonoBehaviour
 
     }
 
-    public void Die()
+    IEnumerator Appear()
     {
-        _isDead = true;
-        // TODO : Add particule system
-
+        _state = States.APPEARING;
+        yield return new WaitForSeconds(1f / appearSpeedAnimation);
+        _state = States.READY;
+    }
+    IEnumerator Disappear()
+    {
+        _state = States.DISAPPERING;
+        _animator.SetBool("updateAnims", false);
+        _animator.Play("Fox_disappear");
+        yield return new WaitForSeconds(1f / disappearSpeedAnimation);
         FindObjectOfType<LevelManager>().Restart();
+    }
+
+    public void Die() 
+    { 
+        _state = States.DISAPPERING;
+
+        StartCoroutine(Disappear());
     }
 
     #endregion
