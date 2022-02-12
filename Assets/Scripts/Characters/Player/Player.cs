@@ -2,10 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(CapsuleCollider2D))]
+[RequireComponent(typeof(CapsuleCollider2D))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(SfxManager))]
-public class Fox : MonoBehaviour
+[RequireComponent(typeof(PlayerHealth))]
+[RequireComponent(typeof(LevelManager))]
+public class Player : MonoBehaviour
 {
     #region Values
 
@@ -29,11 +34,11 @@ public class Fox : MonoBehaviour
     Collider2D standingCheckCollider;
 
     [SerializeField]
-    Transform groundCheckCollider;
+    Transform groundCheckTransform;
 
     [SerializeField]
     [Range(0f, 0.2f)]
-    float groundCheckRadius = 0.1f;
+    float groundCheckRadius = 0.15f;
 
     [Header("Jump")]
 
@@ -51,11 +56,11 @@ public class Fox : MonoBehaviour
     float slidingFactor = 3;
 
     [SerializeField]
-    Transform wallCheckCollider;
+    Transform wallCheckTransform;
 
     [SerializeField]
     [Range(0f, 0.2f)]
-    float wallCheckRadius = 0.1f;
+    float wallCheckRadius = 0.15f;
 
     [Header("Crouch")]
 
@@ -63,14 +68,14 @@ public class Fox : MonoBehaviour
     Collider2D crouchingCheckCollider;
 
     [SerializeField]
-    Transform overHeadLeftCheckCollider;
+    Transform overHeadLeftCheckTransform;
 
     [SerializeField]
-    Transform overHeadRightCheckCollider;
+    Transform overHeadRightCheckTransform;
 
     [SerializeField]
     [Range(0f, 0.2f)]
-    float overHeadCheckRadius = 0.1f;
+    float overHeadCheckRadius = 0.15f;
 
     [Header("Appear / Disappear")]
     [SerializeField]
@@ -114,13 +119,19 @@ public class Fox : MonoBehaviour
 
     #region Movement
     private enum States { APPEARING, READY, DISAPPERING };
-    [SerializeField] States _state =  States.APPEARING;
-    [SerializeField] bool _facingRight = true;
-    [SerializeField] bool _isGrounded = false;
-    [SerializeField] bool _isRunning = false;
-    [SerializeField] bool _isCrouching = false;
-    [SerializeField] bool _isJumping = false;
-    [SerializeField] bool _isSliding = false;
+    States _state =  States.APPEARING;
+    [SerializeField]
+    bool _facingRight = true;
+    [SerializeField]
+    bool _isGrounded = false;
+    [SerializeField]
+    bool _isRunning = false;
+    [SerializeField]
+    bool _isCrouching = false;
+    [SerializeField]
+    bool _isJumping = false;
+    [SerializeField]
+    bool _isSliding = false;
     int _successiveJumps = 0;
     #endregion
 
@@ -171,10 +182,10 @@ public class Fox : MonoBehaviour
             Gizmos.color = Color.red;
 
             // Draw the detection colliders
-            Gizmos.DrawSphere(wallCheckCollider.position, wallCheckRadius);
-            Gizmos.DrawSphere(overHeadRightCheckCollider.position, overHeadCheckRadius);
-            Gizmos.DrawSphere(overHeadLeftCheckCollider.position, overHeadCheckRadius);
-            Gizmos.DrawSphere(groundCheckCollider.position, groundCheckRadius);
+            Gizmos.DrawSphere(wallCheckTransform.position, wallCheckRadius);
+            Gizmos.DrawSphere(overHeadRightCheckTransform.position, overHeadCheckRadius);
+            Gizmos.DrawSphere(overHeadLeftCheckTransform.position, overHeadCheckRadius);
+            Gizmos.DrawSphere(groundCheckTransform.position, groundCheckRadius);
         }
     }
 
@@ -198,9 +209,6 @@ public class Fox : MonoBehaviour
         if (_state == States.DISAPPERING)
             return false;
 
-        if (FindObjectOfType<InventorySystem>().IsActive())
-            return false;
-
         return true;
     }
 
@@ -209,14 +217,14 @@ public class Fox : MonoBehaviour
         _isGrounded = false;
 
         // Check if the GroundCheckObject is colliding with other 2D colliders that are in the "Ground" Layer
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(groundCheckCollider.position, groundCheckRadius, groundLayerMask);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(groundCheckTransform.position, groundCheckRadius, groundLayerMask);
         if (colliders.Length > 0)
             _isGrounded = true;
     }
     
     void _SliceWallsCheck()
     {
-        bool wallsCollision = Physics2D.OverlapCircle(wallCheckCollider.transform.position, wallCheckRadius, groundLayerMask);
+        bool wallsCollision = Physics2D.OverlapCircle(wallCheckTransform.transform.position, wallCheckRadius, groundLayerMask);
         bool isFalling = _rigidbody.velocity.y < 0 && !_isGrounded;
         bool wantToMove = _moveInputValue != 0;
         bool isSliding = wallsCollision && wantToMove && isFalling;
@@ -263,8 +271,8 @@ public class Fox : MonoBehaviour
                 // If we are crouching and we want not to crouch again, we verify that we can
                 if (!_crouchInputValue)
                 {
-                    bool rightOverlap = Physics2D.OverlapCircle(overHeadRightCheckCollider.position, overHeadCheckRadius, groundLayerMask);
-                    bool leftOverlap = Physics2D.OverlapCircle(overHeadLeftCheckCollider.position, overHeadCheckRadius, groundLayerMask);
+                    bool rightOverlap = Physics2D.OverlapCircle(overHeadRightCheckTransform.position, overHeadCheckRadius, groundLayerMask);
+                    bool leftOverlap = Physics2D.OverlapCircle(overHeadLeftCheckTransform.position, overHeadCheckRadius, groundLayerMask);
                     _isCrouching = rightOverlap || leftOverlap;
                 }
             } else
@@ -348,14 +356,29 @@ public class Fox : MonoBehaviour
 
     }
 
+    void _FreezePosition()
+    {
+        _rigidbody.constraints = RigidbodyConstraints2D.FreezePosition;
+        _rigidbody.freezeRotation = true;
+    }
+
+    void _UnFreezePosition()
+    {
+        _rigidbody.constraints = RigidbodyConstraints2D.None;
+        _rigidbody.freezeRotation = true;
+    }
+
     IEnumerator Appear()
     {
+        _FreezePosition();
         _state = States.APPEARING;
         yield return new WaitForSeconds(1f / appearSpeedAnimation);
         _state = States.READY;
+        _UnFreezePosition();
     }
     IEnumerator Disappear()
     {
+        _FreezePosition();
         _state = States.DISAPPERING;
         _animator.SetBool("updateAnims", false);
         _animator.Play("Fox_disappear");

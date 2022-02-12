@@ -8,13 +8,18 @@ public class SongManager : MonoBehaviour
     [SerializeField]
     List<AudioClip> _songs = new List<AudioClip>();
 
+    [SerializeField]
+    AudioSource _audiosource;
+
     int _songIndex = 0;
 
-    AudioSource _audiosource;
+    private void Reset()
+    {
+        _audiosource = GetComponent<AudioSource>();
+    }
 
     void Awake()
     {
-        _audiosource = GetComponent<AudioSource>();
         PlaySong();
     }
 

@@ -6,12 +6,12 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(RegularMovement))]
-public class FlyingPlatform : MonoBehaviour
+public class FlyingPlatform : InteractionObject
 {
     [Header("Movement on fall")]
     [SerializeField]
     [Range(0, 3f)]
-    float _fallingSpeed = 2.0f;
+    float _fallingSpeed = 1f;
 
     [SerializeField]
     [Range(0, 5f)]
@@ -24,20 +24,21 @@ public class FlyingPlatform : MonoBehaviour
     float _propellerSpeedDiff = 0.1f;
 
     [SerializeField]
-    [Range(0, 0.5f)]
-    float _propellerTimeDiff = 0.2f;
+    [Range(0, 1f)]
+    float _propellerTimeDiff = 1f;
 
     [SerializeField]
     [Range(0, 0.5f)]
-    float _propellerMinSpeed = 0.3f;
+    float _propellerMinSpeed = 0.1f;
 
     float _propellerSpeed = 1f;
     bool _on = true;
     Animator _animator;
 
-    private void Reset()
+    public override void Reset()
     {
         gameObject.layer = LayerMask.NameToLayer("Ground");
+        base.Reset();
     }
 
     void Awake()
@@ -54,7 +55,7 @@ public class FlyingPlatform : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    protected override void OnCollisionWithPlayer(Collision2D collision)
     {
         if (_on && collision.rigidbody.tag == "Player")
         {
@@ -80,7 +81,6 @@ public class FlyingPlatform : MonoBehaviour
 
     IEnumerator Fall()
     {
-        
         _on = false;
          GetComponent<RegularMovement>().Stop();
         

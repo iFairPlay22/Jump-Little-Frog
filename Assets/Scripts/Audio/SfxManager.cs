@@ -5,17 +5,15 @@ using UnityEngine;
 [RequireComponent(typeof(AudioSource))]
 public class SfxManager : MonoBehaviour
 {
+    [SerializeField]
     AudioSource _audioSource;
 
     void Reset()
     {
         // Set the default values of the component
         GetComponent<AudioSource>().playOnAwake = false;
-    }
-
-    void Awake()
-    {
-        _audioSource = FindObjectOfType<AudioSource>();
+        
+        _audioSource = GetComponent<AudioSource>();
     }
 
     public void Play(AudioClip audioClip)
@@ -28,7 +26,7 @@ public class SfxManager : MonoBehaviour
 
         if (_audioSource.isPlaying)
         {
-            Debug.LogWarning("[SFX] Audio source is already playing + " + _audioSource.clip.name + " SFX");
+            Debug.LogWarning("[SFX] Audio source is already playing " + _audioSource.clip.name + " SFX");
             _audioSource.Stop();
         }
 
