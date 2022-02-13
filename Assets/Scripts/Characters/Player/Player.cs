@@ -47,8 +47,8 @@ public class Player : MonoBehaviour
     int maxSuccessiveJumps = 2;
 
     [SerializeField]
-    [Range(5, 10)]
-    float jumpPower = 7.5f;
+    [Range(250, 350)]
+    float jumpPower = 300f;
 
     [Header("Slice walls")]
     [SerializeField]
@@ -248,7 +248,7 @@ public class Player : MonoBehaviour
                 _isGrounded = false;
                 _isJumping = true;
                 _successiveJumps++;
-                _rigidbody.velocity = Vector3.up * jumpPower;
+                _rigidbody.velocity = Vector3.up * jumpPower * Time.fixedDeltaTime;
                 _sfxManager.Play(jumpAudioClip);
             }
             _jumpInputValue = false;
@@ -260,6 +260,12 @@ public class Player : MonoBehaviour
         }
 
         _animator.SetBool("jump", _isJumping);
+    }
+
+    public void Propulse(float propulsionPower)
+    {
+        _rigidbody.velocity = Vector3.up * propulsionPower * Time.fixedDeltaTime;
+        _successiveJumps = 0;
     }
 
     void _Crouch()
