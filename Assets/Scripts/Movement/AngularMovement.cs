@@ -53,9 +53,7 @@ public class AngularMovement : MonoBehaviour
 
             int minZDiff = (int) Mathf.Min(nextZ - startAngle, endAngle - nextZ);
             float lerpFactor = _Sigmoid(minZDiff);
-            Debug.Log(lerpFactor);
             nextZ = Mathf.Lerp(currentZ, nextZ, lerpFactor);
-
         }
 
         transform.localRotation = Quaternion.Euler(0, 0, nextZ);
