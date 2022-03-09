@@ -16647,8 +16647,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39b326a344c931f4aa95c12ae7e257a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 50
   DetectionRange: 10
+  SecondsBeforeMove: 1.5
+  TimeForCollisionAnimation: 3
+  Speed: 8
+  DisplayGizmos: 1
 --- !u!4 &2100948151 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 172808310185620697, guid: ee93cf432d313c34b91c22ff585ab03e, type: 3}
