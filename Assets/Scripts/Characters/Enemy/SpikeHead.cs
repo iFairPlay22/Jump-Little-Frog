@@ -38,9 +38,9 @@ public class SpikeHead : MonoBehaviour
 
     #region Movement & Collisions
     Vector3[] _directionsToLookAt = {};
-    bool move = false;
+    bool isMoving = false;
     Vector3? moveTo;
-    string _onCollisionAnimationParameter = "";
+    string _onCollisionAnimationName = "";
     #endregion
 
     #region Components
@@ -50,37 +50,15 @@ public class SpikeHead : MonoBehaviour
 
     #endregion
 
+    #region Movement & Collisions
+
     private void Awake()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _animator = GetComponent<Animator>();
 
         _animator.SetFloat("collisionAnimationSpeed", TimeForCollisionAnimation);
-        ResetCollisionAnimations();
     }
-
-    #region Collision Animations
-
-    private void ResetCollisionAnimations()
-    {
-        _animator.SetBool("bottomHit", false);
-        _animator.SetBool("topHit", false);
-        _animator.SetBool("rightHit", false);
-        _animator.SetBool("leftHit", false);
-    }
-
-    private IEnumerator PlayCollisionAnimation()
-    {
-        Debug.Log(_onCollisionAnimationParameter + " " + (1.0f / TimeForCollisionAnimation));
-        _animator.SetBool(_onCollisionAnimationParameter, true);
-        yield return new WaitForSeconds(2.0f);
-        ResetCollisionAnimations();
-        _onCollisionAnimationParameter = "";
-    }
-
-    #endregion
-
-    #region Movement & Collisions
     private void Start()
     {
         _InitDirections();
@@ -97,13 +75,13 @@ public class SpikeHead : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (moveTo == null && move == false)
+        if (moveTo == null && isMoving == false)
         {
             // On n'a pas détecté de collision, on ne bouge pas
             _MakeDetections();
         }
 
-        if (moveTo != null && move == true)
+        if (moveTo != null && isMoving == true)
         {
             // On a précedemment détecté une collision, on bouge
             _Move();
@@ -112,7 +90,7 @@ public class SpikeHead : MonoBehaviour
 
     private void _Move()
     {
-        if (moveTo == null || move == false)
+        if (moveTo == null || isMoving == false)
             return;
 
         Vector3 currentPosition = transform.position;
@@ -124,8 +102,10 @@ public class SpikeHead : MonoBehaviour
             // On joue l'animation de collision
             nextPosition = moveTo.Value;
             moveTo = null;
-            move = false;
-            StartCoroutine(PlayCollisionAnimation());
+            isMoving = false;
+            Debug.Log("SpikeHead_" + _onCollisionAnimationName);
+            _animator.Play("SpikeHead_" + _onCollisionAnimationName);
+            _onCollisionAnimationName = "";
         }
 
         transform.position = nextPosition;
@@ -152,26 +132,27 @@ public class SpikeHead : MonoBehaviour
                     1 << LayerMask.NameToLayer("Ground")
                 );
 
-                if (groundHit.collider != null)
+                if (groundHit.collider != null && playerHit.distance < groundHit.distance)
                 {
-                    // Si on a détecté le ground dans cette direction
+                    // Si on a détecté le ground dans cette direction, atteignable
+                    // après l'utilisateur, le spike head l'attaque.
                     // On update le vecteur de destination, et le paramètre
                     // de l'animation correspondante
                     moveTo = groundHit.point;
                     if (directionToLookAt == Vector3.down || directionToLookAt == Vector3.up)
                     {
                         if (directionToLookAt == Vector3.down)
-                            _onCollisionAnimationParameter = "bottomHit";
+                            _onCollisionAnimationName = "bottomHit";
                         else
-                            _onCollisionAnimationParameter = "topHit";
+                            _onCollisionAnimationName = "topHit";
 
                         moveTo -= directionToLookAt * (_spriteRenderer.bounds.size.y / 2.0f);
 
                     } else {
                         if (directionToLookAt == Vector3.right)
-                            _onCollisionAnimationParameter = "rightHit";
+                            _onCollisionAnimationName = "rightHit";
                         else
-                            _onCollisionAnimationParameter = "leftHit";
+                            _onCollisionAnimationName = "leftHit";
 
                         moveTo -= directionToLookAt * (_spriteRenderer.bounds.size.y / 2.0f);
                     }
@@ -186,9 +167,8 @@ public class SpikeHead : MonoBehaviour
 
     IEnumerator WaitBeforeMove()
     {
-        move = false;
         yield return new WaitForSeconds(SecondsBeforeMove);
-        move = true;
+        isMoving = true;
     }
 
     #endregion
