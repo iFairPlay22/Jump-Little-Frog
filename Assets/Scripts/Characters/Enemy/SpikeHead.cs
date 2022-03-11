@@ -103,7 +103,6 @@ public class SpikeHead : MonoBehaviour
             nextPosition = moveTo.Value;
             moveTo = null;
             isMoving = false;
-            Debug.Log("SpikeHead_" + _onCollisionAnimationName);
             _animator.Play("SpikeHead_" + _onCollisionAnimationName);
             _onCollisionAnimationName = "";
         }
