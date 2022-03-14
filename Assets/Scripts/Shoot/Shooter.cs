@@ -6,9 +6,6 @@ public class Shooter : MonoBehaviour
 {
     [Header("Shoot")]
     [SerializeField]
-    Transform shootingStartPosition;
-
-    [SerializeField]
     GameObject shootingProjectile;
 
     [SerializeField]
@@ -22,7 +19,7 @@ public class Shooter : MonoBehaviour
         if (displayGizmos)
         {
             Gizmos.color = Color.gray;
-            Gizmos.DrawSphere(shootingStartPosition.position, 0.1f);
+            Gizmos.DrawSphere(shootingProjectilesRoot.transform.position, 0.1f);
         }
     }
 
@@ -32,17 +29,11 @@ public class Shooter : MonoBehaviour
         shootingProjectile.SetActive(false);
     }
 
-    void Update()
+    public void _Shoot()
     {
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            _Shoot();
-        }
-    }
-
-    void _Shoot()
-    {
-        GameObject projectile = Instantiate(shootingProjectile, shootingStartPosition);
+        // Create projectile
+        GameObject projectile = Instantiate(shootingProjectile, shootingProjectilesRoot.transform);
+        projectile.transform.localScale *= -transform.localScale.x;
         projectile.transform.SetParent(shootingProjectilesRoot.transform);
         projectile.SetActive(true);
     }
