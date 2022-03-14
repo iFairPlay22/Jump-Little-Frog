@@ -35,7 +35,9 @@ public class FirePlant : MonoBehaviour
         yield return new WaitForSeconds(SecondsBetweenAttacks);
         _animator.Play("FirePlant_attack");
 
-        yield return new WaitForSeconds(1.0f / AttackAnimationTime);
+        yield return new WaitForSeconds(
+            (1.0f / 2.0f) * (1.0f / AttackAnimationTime)
+        );
         _shooter._Shoot();
 
         StartCoroutine(_Attack());
