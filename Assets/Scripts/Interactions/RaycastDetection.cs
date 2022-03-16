@@ -86,7 +86,8 @@ public abstract class RaycastDetection : MonoBehaviour
 
     public virtual void FixedUpdate()
     {
-        _MakeDetections();
+        if (ShoudDetectRaycastCollisions())
+            _MakeDetections();
     }
     
     private void _MakeDetections()
@@ -109,16 +110,14 @@ public abstract class RaycastDetection : MonoBehaviour
                     DetectionRange,
                     1 << LayerMask.NameToLayer("Ground")
                 );
-
-                if (groundHit.collider != null && playerHit.distance < groundHit.distance)
-                {
-                    OnRaycastDetection(groundHit.point, playerHit.point, directionToLookAt);
-                }
+                OnRaycastDetection(groundHit, playerHit, directionToLookAt);
             }
         }
     }
 
-    protected abstract void OnRaycastDetection(Vector3 groundHit, Vector3 hitPoint, Vector3 direction);
+    protected abstract bool ShoudDetectRaycastCollisions();
+
+    protected abstract void OnRaycastDetection(RaycastHit2D groundHit, RaycastHit2D hitPoint, Vector3 direction);
 
     #endregion
 

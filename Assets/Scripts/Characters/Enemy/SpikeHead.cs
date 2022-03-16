@@ -48,12 +48,16 @@ public class SpikeHead : RaycastDetection
         _animator.SetFloat("collisionAnimationSpeed", TimeForCollisionAnimation);
     }
 
-    protected override void OnRaycastDetection(Vector3 groundHit, Vector3 playerHit, Vector3 direction)
+    protected override bool ShoudDetectRaycastCollisions()
     {
-        if (_ignoreRaycastDetection)
-            return;
+        return !_ignoreRaycastDetection;
+    }
 
-        _moveTo = groundHit;
+    protected override void OnRaycastDetection(RaycastHit2D groundHit, RaycastHit2D playerHit, Vector3 direction)
+    {
+        if (groundHit.collider != null && playerHit.distance < groundHit.distance)
+            
+        _moveTo = groundHit.point;
 
         if (direction == Vector3.down || direction == Vector3.up)
         {

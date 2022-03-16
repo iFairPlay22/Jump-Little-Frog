@@ -102,6 +102,7 @@ public class RegularMovement : MonoBehaviour
         _Move();
     }
 
+
     void _Move()
     {
         if (_stop)
@@ -143,6 +144,10 @@ public class RegularMovement : MonoBehaviour
     public void Stop()
     {
         _stop = true;
+    }
+    public void UnStop()
+    {
+        _stop = false;
     }
 
     #endregion
