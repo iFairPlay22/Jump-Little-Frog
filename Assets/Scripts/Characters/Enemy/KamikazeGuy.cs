@@ -4,6 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Explosion))]
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Rigidbody2D))]
 public class KamikazeGuy : RaycastDetection
 {
     [Header("Target to follow")]
@@ -40,6 +41,7 @@ public class KamikazeGuy : RaycastDetection
     float _currentSpeed = 0f;
     Explosion _explosionSystem;
     Animator _animator;
+    Rigidbody2D _rigidbody;
 
     enum States { WAITING, WALKING, RUNNING, EXPLODING }
     States _currentState = States.WAITING;
@@ -50,6 +52,8 @@ public class KamikazeGuy : RaycastDetection
 
         _animator = GetComponent<Animator>();
         _animator.SetFloat("ExplodingAnimationTime", 1.0f / ExplodingSeconds);
+
+        _rigidbody = GetComponent<Rigidbody2D>();
     }
 
     protected override bool ShoudDetectRaycastCollisions()
