@@ -26,7 +26,7 @@ public class Explosion : MonoBehaviour
         GameObject explosionGO = Instantiate(ParticleSystemModel, ExplosionContainer.transform);
         explosionGO.transform.position = ExplosionTransform.position;
         explosionGO.SetActive(true);
-        explosionGO.GetComponent<ParticleSystem>().Play();
+        explosionGO.GetComponent<ParticleSystem>().Play(true);
 
         Callback.Invoke();
     }
