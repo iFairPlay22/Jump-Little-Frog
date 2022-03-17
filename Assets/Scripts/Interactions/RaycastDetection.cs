@@ -20,9 +20,8 @@ public abstract class RaycastDetection : MonoBehaviour
     { RIGHT, LEFT, TOP, BOTTOM, HORIZONTAL, VERTICAL, ALL }
 
     [Header("Debug")]
-
     [SerializeField]
-    bool DisplayGizmos = true;
+    protected bool DisplayGizmos = true;
 
     #endregion
 
