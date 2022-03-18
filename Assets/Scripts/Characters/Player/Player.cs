@@ -86,6 +86,10 @@ public class Player : MonoBehaviour
     [Range(0f, 2f)]
     float disappearSpeedAnimation = 0.8f;
 
+    [Header("SFX")]
+    [SerializeField]
+    ParticleSystem movingParticleSystem;
+
     [Header("Layer")]
 
     [SerializeField]
@@ -325,6 +329,15 @@ public class Player : MonoBehaviour
         
         Vector3 targetVelocity = new Vector2(xVelocity, yVelocity);
         _rigidbody.velocity = targetVelocity;
+
+        #endregion
+
+        #region Particles
+        if (_isGrounded && movingParticleSystem.isStopped)
+            movingParticleSystem.Play();
+
+        if (!_isGrounded && !movingParticleSystem.isStopped)
+            movingParticleSystem.Stop();
 
         #endregion
 
