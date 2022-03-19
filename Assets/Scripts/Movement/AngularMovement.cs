@@ -17,7 +17,6 @@ public class AngularMovement : MonoBehaviour
     [SerializeField]
     [Range(0, 360)]
     int endAngle = 270;
-    [SerializeField]
 
     int _clockWise = 1;
 

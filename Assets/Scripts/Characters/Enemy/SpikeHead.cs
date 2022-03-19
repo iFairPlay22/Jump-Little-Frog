@@ -26,6 +26,7 @@ public class SpikeHead : RaycastDetection
     #region Private Fields
 
     #region Movement & Collisions
+    [SerializeField]
     bool _ignoreRaycastDetection = false;
     bool _isMoving = false;
     Vector3? _moveTo;
@@ -55,7 +56,8 @@ public class SpikeHead : RaycastDetection
 
     protected override void OnRaycastDetection(RaycastHit2D groundHit, RaycastHit2D playerHit, Vector3 direction)
     {
-        if (groundHit.collider != null && playerHit.distance < groundHit.distance)
+        if (!(groundHit.collider != null && playerHit.distance < groundHit.distance))
+            return;
             
         _moveTo = groundHit.point;
 
@@ -104,7 +106,7 @@ public class SpikeHead : RaycastDetection
         if (_moveTo == null)
             return;
 
-        Vector3 currentPosition = transform.position;
+        Vector3 currentPosition = transform.parent.position;
         Vector3 nextPosition = Vector3.MoveTowards(currentPosition, _moveTo.Value, Time.fixedDeltaTime * Speed);
         
         // Si on se rapproche grandement du vecteur destination
@@ -121,7 +123,7 @@ public class SpikeHead : RaycastDetection
             _ignoreRaycastDetection = false;
         }
 
-        transform.position = nextPosition;
+        transform.parent.position = nextPosition;
     }
 
     #endregion
