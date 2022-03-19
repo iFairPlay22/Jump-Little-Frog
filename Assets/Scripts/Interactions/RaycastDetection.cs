@@ -10,7 +10,10 @@ public abstract class RaycastDetection : MonoBehaviour
     [Header("Detection")]
 
     [SerializeField]
-    [Range(10f, 100f)]
+    Transform DectectionPoint;
+
+    [SerializeField]
+    [Range(0f, 100f)]
     float DetectionRange = 5.0f;
 
     [SerializeField]
@@ -94,7 +97,7 @@ public abstract class RaycastDetection : MonoBehaviour
         foreach (Vector3 directionToLookAt in _directionsToLookAt)
         {
             RaycastHit2D playerHit = Physics2D.Raycast(
-                transform.position,
+                DectectionPoint.position,
                 transform.TransformDirection(directionToLookAt),
                 DetectionRange,
                 1 << LayerMask.NameToLayer("Player")
@@ -104,7 +107,7 @@ public abstract class RaycastDetection : MonoBehaviour
             if (playerHit.collider != null)
             {
                 RaycastHit2D groundHit = Physics2D.Raycast(
-                    transform.position,
+                    DectectionPoint.position,
                     transform.TransformDirection(directionToLookAt),
                     DetectionRange,
                     1 << LayerMask.NameToLayer("Ground")
@@ -133,8 +136,8 @@ public abstract class RaycastDetection : MonoBehaviour
         {
             Gizmos.color = Color.red;
             Gizmos.DrawLine(
-                transform.position,
-                transform.position + directionToLookAt * DetectionRange
+                DectectionPoint.position,
+                DectectionPoint.position + directionToLookAt * DetectionRange
             );
         }
     }

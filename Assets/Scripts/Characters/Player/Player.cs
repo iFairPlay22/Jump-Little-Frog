@@ -402,7 +402,7 @@ public class Player : MonoBehaviour
         _animator.SetBool("updateAnims", false);
         _animator.Play("Fox_disappear");
         yield return new WaitForSeconds(1f / disappearSpeedAnimation);
-        FindObjectOfType<LevelManager>().Restart();
+        FindObjectOfType<LevelManager>().Defeat();
     }
 
     public void Die() 
