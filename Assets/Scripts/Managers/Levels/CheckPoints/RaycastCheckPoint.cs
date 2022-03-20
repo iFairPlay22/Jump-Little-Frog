@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
-public class EndCheckPoint : RaycastDetection
+public abstract class RaycastCheckPoint : RaycastDetection
 {
     [Header("Animation")]
     [SerializeField]
@@ -16,13 +16,13 @@ public class EndCheckPoint : RaycastDetection
 
     Animator _animator;
 
-    void Awake()
+    public virtual void Awake()
     {
         _animator = GetComponent<Animator>();
         _animator.enabled = false;
     }
 
-    void Update()
+    public virtual void Update()
     {
         // Enable checkpoint animations when the target is in the circle
         if (!_animator.enabled && Vector2.Distance(transform.position, Target.position) <= StartAnimateWhenTargetInRange)
@@ -39,8 +39,10 @@ public class EndCheckPoint : RaycastDetection
     protected override void OnRaycastDetection(RaycastHit2D groundHit, RaycastHit2D hitPoint, Vector3 direction)
     {
         _detectCollisions = false;
-        FindObjectOfType<LevelManager>().Victory();
+        OnCheckPointReached();
     }
+
+    protected abstract void OnCheckPointReached();
 
     public override void OnDrawGizmos()
     {

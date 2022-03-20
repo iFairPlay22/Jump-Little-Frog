@@ -9,7 +9,6 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(SfxManager))]
 [RequireComponent(typeof(PlayerHealth))]
-[RequireComponent(typeof(LevelManager))]
 public class Player : MonoBehaviour
 {
     #region Values
