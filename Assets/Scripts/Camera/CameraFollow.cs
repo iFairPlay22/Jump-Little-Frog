@@ -15,6 +15,11 @@ public class CameraFollow : MonoBehaviour
     [SerializeField]
     Vector2 minValues, maxValues;
 
+    void Start()
+    {
+        //transform.position = target.position - offset;
+    }
+
     void FixedUpdate()
     {
         FollowTarget();

@@ -152,6 +152,7 @@ public class Player : MonoBehaviour
         _animator.SetFloat("disappearAnimationSpeed", disappearSpeedAnimation);
         _animator.SetBool("updateAnims", true);
 
+        transform.position = FindObjectOfType<LevelManager>().GetCurrentSpawnPoint();
         StartCoroutine(Appear());
     }
 

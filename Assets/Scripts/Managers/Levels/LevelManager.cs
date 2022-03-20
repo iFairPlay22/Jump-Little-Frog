@@ -7,24 +7,18 @@ public class LevelManager : MonoBehaviour
 {
     Vector3 _initialSpawnPoint;
     Vector3 _lastSpawnPoint;
+    Vector3 _currentSpawnPoint;
 
-    void _DebugAll(string fname)
-    {
-        Debug.Log(fname + "() init=" + _initialSpawnPoint + " last=" + _lastSpawnPoint);
-    }
-
-    private void Start()
+    void Awake()
     {
         _initialSpawnPoint = FindObjectOfType<StartCheckPoint>().GetComponent<Spawn>().GetSpawnPoint();
         _lastSpawnPoint = _initialSpawnPoint;
         _SpawnInInitialCheckPoint();
-        _DebugAll("Start()");
     }
 
     public void CheckPointReached(Spawn currentSpawn)
     {
         _lastSpawnPoint = currentSpawn.GetSpawnPoint();
-        _DebugAll("Start()");
     }
 
     public void Victory()
@@ -46,14 +40,17 @@ public class LevelManager : MonoBehaviour
 
     void _SpawnInInitialCheckPoint()
     {
-        FindObjectOfType<Player>().gameObject.transform.position = _initialSpawnPoint;
-        _DebugAll("_SpawnInInitialCheckPoint()");
+        _currentSpawnPoint = _initialSpawnPoint;
     }
 
     void _SpawnInLastCheckPoint()
     {
-        FindObjectOfType<Player>().gameObject.transform.position = _lastSpawnPoint;
-        _DebugAll("_SpawnInLastCheckPoint()");
+        _currentSpawnPoint = _lastSpawnPoint;
+    }
+
+    public Vector3 GetCurrentSpawnPoint()
+    {
+        return _currentSpawnPoint;
     }
 }
 
