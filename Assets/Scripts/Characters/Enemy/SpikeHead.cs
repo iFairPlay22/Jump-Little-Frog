@@ -106,7 +106,7 @@ public class SpikeHead : RaycastDetection
         if (_moveTo == null)
             return;
 
-        Vector3 currentPosition = transform.parent.position;
+        Vector3 currentPosition = transform.position;
         Vector3 nextPosition = Vector3.MoveTowards(currentPosition, _moveTo.Value, Time.fixedDeltaTime * Speed);
         
         // Si on se rapproche grandement du vecteur destination
@@ -123,7 +123,7 @@ public class SpikeHead : RaycastDetection
             _ignoreRaycastDetection = false;
         }
 
-        transform.parent.position = nextPosition;
+        transform.position = nextPosition;
     }
 
     #endregion

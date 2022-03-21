@@ -25,14 +25,13 @@ public class AngularMovement : MonoBehaviour
     private void Awake()
     {
         _rigidBody = GetComponent<Rigidbody2D>();
-        transform.localRotation = Quaternion.Euler(0, 0, startAngle);
+        transform.localRotation = Quaternion.Euler(0, 0, startAngle + 0.1f);
     }
 
     private float _Sigmoid(float x)
     {
         return Mathf.Clamp(.3f, 1.0f / (1.0f + 5.0f * Mathf.Exp(-1.0f / 7.0f * x)), 1.0f);
     }
-    
 
     void FixedUpdate()
     {

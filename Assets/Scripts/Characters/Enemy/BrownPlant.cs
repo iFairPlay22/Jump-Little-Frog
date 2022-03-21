@@ -43,8 +43,9 @@ public class BrownPlant : RaycastDetection
     protected override void OnRaycastDetection(RaycastHit2D groundHit, RaycastHit2D hitPoint, Vector3 direction)
     {
         // Rotate the plant
+        _regularMovement.Stop();
         transform.localScale = new Vector3(-direction.x, 1, 1);
-        
+
         // Attack
         StartCoroutine(_Attack());
         StartCoroutine(_WaitBeforeNewAttack());
@@ -55,7 +56,6 @@ public class BrownPlant : RaycastDetection
         float demiAnimationTime = 0.5f * (1.0f / AttackAnimationTime);
 
         _TimeToAttack = false;
-        _regularMovement.Stop();
         _animator.Play("BrownPlant_attack");
 
         yield return new WaitForSeconds(demiAnimationTime);

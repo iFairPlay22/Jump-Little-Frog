@@ -75,7 +75,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ece6fad8d6bb86b4ca05d0858def1858, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BeeModel: {fileID: 8834416696591741298, guid: a21299b296f5f3a43bc54fa861470bf2, type: 3}
+  BeeModel: {fileID: 9213581828885158183}
   NumberOfBees: 10
   BeeGroupRange: 1.5
   Target: {fileID: 0}
@@ -140,6 +140,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cbf010b9424110a46a31de4fdf04b0a4, type: 3}
+--- !u!1 &9213581828885158183 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1533608397417124978, guid: cbf010b9424110a46a31de4fdf04b0a4, type: 3}
+  m_PrefabInstance: {fileID: 7680132072797310293}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3030076608659138899 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4654947346133689350, guid: cbf010b9424110a46a31de4fdf04b0a4, type: 3}

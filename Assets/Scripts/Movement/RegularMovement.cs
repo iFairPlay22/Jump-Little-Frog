@@ -102,7 +102,6 @@ public class RegularMovement : MonoBehaviour
         _Move();
     }
 
-
     void _Move()
     {
         if (_stop)
