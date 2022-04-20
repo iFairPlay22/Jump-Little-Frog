@@ -7,8 +7,11 @@ using UnityEngine;
 public class ShootProjectile : MonoBehaviour
 {
     [SerializeField]
+    bool LinearMovement = true;
+
+    [SerializeField]
     [Range(0f, 100f)]
-    float projectileSpeed = 1f;
+    float LinearSpeed = 50f;
 
     void Reset()
     {
@@ -20,7 +23,8 @@ public class ShootProjectile : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        transform.Translate(transform.right * transform.localScale.x * projectileSpeed * Time.fixedDeltaTime);
+        if (LinearMovement)
+            transform.Translate(transform.right * transform.localScale.x * LinearSpeed * Time.fixedDeltaTime);
     }
 
     void OnTriggerEnter2D(Collider2D collision)
