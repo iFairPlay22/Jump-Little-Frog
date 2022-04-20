@@ -16,7 +16,7 @@ public class Player : MonoBehaviour
     #region Serialize fields
     [Header("Speed")]
     [SerializeField]
-    [Range(200, 300)]
+    [Range(300, 500)]
     float speed = 250;
 
     [SerializeField]
@@ -46,7 +46,7 @@ public class Player : MonoBehaviour
     int maxSuccessiveJumps = 2;
 
     [SerializeField]
-    [Range(250, 350)]
+    [Range(300, 500)]
     float jumpPower = 300f;
 
     [Header("Slice walls")]
