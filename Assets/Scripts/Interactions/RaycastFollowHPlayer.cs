@@ -4,7 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Rigidbody2D))]
-public class Chicken : RaycastDetection
+public class RaycastFollowHPlayer : RaycastDetection
 {
     [Header("Run")]
     [SerializeField]
@@ -13,8 +13,9 @@ public class Chicken : RaycastDetection
 
     Vector3 _target;
     Animator _animator;
-
     enum States { WAITING, RUNNING }
+    [SerializeField]
+
     States _currentState = States.WAITING;
 
     private void Awake()
@@ -24,7 +25,7 @@ public class Chicken : RaycastDetection
 
     protected override bool ShoudDetectRaycastCollisions()
     {
-        return _currentState == States.WAITING;
+        return true;
     }
 
     protected override void OnRaycastDetection(RaycastHit2D groundHit, RaycastHit2D playerHit, Vector3 direction)
@@ -37,21 +38,19 @@ public class Chicken : RaycastDetection
     {
         base.FixedUpdate();
 
-        bool run = _currentState == States.RUNNING;
-
-        if (run)
+        if (_currentState == States.RUNNING)
             _Move();
 
-        _animator.SetBool("Run", run);
+        _animator.SetBool("Run", _currentState == States.RUNNING);
     }
 
     void _Move()
     {
         // Follow the Target
-        Vector3 current = transform.parent.position;
+        Vector3 current = transform.position;
         Vector3 next = Vector3.MoveTowards(current, _target, RunningSpeed * Time.deltaTime);
         next = new Vector3(next.x, current.y, current.z);
-        transform.parent.position = next;
+        transform.position = next;
 
         if (Vector3.Distance(next, _target) <= 0.3f)
             _currentState = States.WAITING;
