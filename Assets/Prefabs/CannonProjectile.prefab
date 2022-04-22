@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6771867935342345440}
   - component: {fileID: 2928283264738615098}
   - component: {fileID: 4336559703983967000}
+  - component: {fileID: 6531606995024976542}
   m_Layer: 0
   m_Name: CannonProjectile
   m_TagString: Untagged
@@ -73,7 +74,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: d700391178f61c3488cd257e7e7a81bf, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 669ef922a468d184489d2a28b0f84bb0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -92,7 +93,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 555319333477165989}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -121,3 +122,17 @@ CapsuleCollider2D:
   m_Offset: {x: -0.00058221817, y: 0.0018230975}
   m_Size: {x: 0.5116625, y: 0.5380314}
   m_Direction: 0
+--- !u!114 &6531606995024976542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 555319333477165989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec594fcbaaf4e0b4a8d8f45e740cb9f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectileSpeed: 3
+  RotationSpeed: 1.5

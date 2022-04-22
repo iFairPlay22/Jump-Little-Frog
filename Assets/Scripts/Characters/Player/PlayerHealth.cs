@@ -17,6 +17,11 @@ public class PlayerHealth : MonoBehaviour
         RestartHealth();
     }
 
+    public void ReduceHealth()
+    {
+        ReduceHealth(1);
+    }
+
     public void ReduceHealth(int damages)
     {
         _livesRemaining = Mathf.Max(_livesRemaining - damages, 0);

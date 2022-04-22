@@ -61,6 +61,9 @@ public class Player : MonoBehaviour
     [Range(0f, 0.2f)]
     float wallCheckRadius = 0.15f;
 
+    [Header("Quick fall")]
+    public float quickFallVelocity = 5;
+
     [Header("Crouch")]
 
     [SerializeField]
@@ -118,6 +121,7 @@ public class Player : MonoBehaviour
     bool _runInputValue = false;
     bool _crouchInputValue = false;
     bool _jumpInputValue = false;
+    bool _quickFallInputValue = false;
     #endregion
 
     #region Movement
@@ -177,6 +181,12 @@ public class Player : MonoBehaviour
         if (Input.GetButtonUp("Crouch"))
             _crouchInputValue = false;
 
+        // Crouch input (to fall quickly)
+        if (Input.GetButtonDown("Crouch"))
+            _quickFallInputValue = true;
+        if (Input.GetButtonUp("Crouch"))
+            _quickFallInputValue = false;
+
     }
 
     void OnDrawGizmos()
@@ -200,7 +210,9 @@ public class Player : MonoBehaviour
 
         _GroundCheck();
         _SliceWallsCheck();
+
         _Jump();
+        _QuickFall();
         _Crouch();
         _Move();
     }
@@ -240,6 +252,20 @@ public class Player : MonoBehaviour
         } else
         {
             _isSliding = false;
+        }
+    }
+
+    void _QuickFall()
+    {
+        bool isFalling = _rigidbody.velocity.y < 0 && !_isGrounded;
+        bool isFlying = !_isGrounded;
+        bool wantToFallQuickly = _quickFallInputValue;
+        bool ok = isFlying & wantToFallQuickly;
+
+        if (ok)
+        {
+            _rigidbody.velocity *= new Vector2(-quickFallVelocity, _rigidbody.velocity.y);
+            _quickFallInputValue = false;
         }
     }
 
