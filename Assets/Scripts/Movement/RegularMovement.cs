@@ -92,7 +92,7 @@ public class RegularMovement : MonoBehaviour
             for (int i = 0; i < Points.Count; i++)
             {
                 Gizmos.DrawSphere(Points[i].position, SphereRadius);
-                Handles.Label(Points[i].position + new Vector3(SphereRadius * 1.1f, 0f, 0f), "" + i, GUIStyle);
+                // Handles.Label(Points[i].position + new Vector3(SphereRadius * 1.1f, 0f, 0f), "" + i, GUIStyle);
             }
         }
     }

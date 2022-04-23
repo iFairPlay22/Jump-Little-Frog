@@ -9,6 +9,9 @@ public class LevelManager : MonoBehaviour
     Vector3 _lastSpawnPoint;
     Vector3 _currentSpawnPoint;
 
+    [SerializeField]
+    float TimeBeforeSpawn = 2;
+
     void Awake()
     {
         _initialSpawnPoint = FindObjectOfType<StartCheckPoint>().GetComponent<Spawn>().GetSpawnPoint();
@@ -29,9 +32,11 @@ public class LevelManager : MonoBehaviour
 
     public void Defeat()
     {
+        Debug.Log("Defeat");
         _ReloadCurrentScene();
         _SpawnInLastCheckPoint();
     }
+
     void _ReloadCurrentScene()
     {
         Scene scene = SceneManager.GetActiveScene();
@@ -41,18 +46,26 @@ public class LevelManager : MonoBehaviour
     void _SpawnInInitialCheckPoint()
     {
         _currentSpawnPoint = _initialSpawnPoint;
+        StartCoroutine(_Spawn());
     }
 
     void _SpawnInLastCheckPoint()
     {
         _currentSpawnPoint = _lastSpawnPoint;
+        StartCoroutine(_Spawn());
     }
 
-    public Vector3 GetCurrentSpawnPoint()
+    IEnumerator _Spawn()
     {
-        return _currentSpawnPoint;
+        yield return new WaitForSeconds(TimeBeforeSpawn);
+        FindObjectOfType<Player>().Spawn(_currentSpawnPoint);
+    }
+
+    void Update()
+    {
+        if (Input.GetKey("escape"))
+            Application.Quit();
     }
 }
 
-    
-        
+

@@ -113,6 +113,7 @@ public class Player : MonoBehaviour
     Rigidbody2D _rigidbody;
     Animator _animator;
     SfxManager _sfxManager;
+    SpriteRenderer _spriteRenderer;
     #endregion
 
     #region Inputs
@@ -155,12 +156,11 @@ public class Player : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody2D>();
         _sfxManager = GetComponent<SfxManager>();
         _animator = GetComponent<Animator>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+        _spriteRenderer.enabled = false;
         _animator.SetFloat("appearAnimationSpeed", appearSpeedAnimation);
         _animator.SetFloat("disappearAnimationSpeed", disappearSpeedAnimation);
         _animator.SetBool("updateAnims", true);
-
-        transform.position = FindObjectOfType<LevelManager>().GetCurrentSpawnPoint();
-        StartCoroutine(Appear());
     }
 
     void Update()
@@ -189,7 +189,6 @@ public class Player : MonoBehaviour
             _quickFallInputValue = true;
         if (Input.GetButtonUp("Crouch"))
             _quickFallInputValue = false;
-
     }
 
     void OnDrawGizmos()
@@ -277,17 +276,17 @@ public class Player : MonoBehaviour
     {
         bool wantsToJump = false;
         bool falling = _rigidbody.velocity.y < 2f;
-        Debug.Log(_rigidbody.velocity.y);
 
+        // Update variables if grounded
         if (falling && _isGrounded)
         {
-            Debug.Log("Au sol");
             _yPositionState = YPosState.NONE;
             _jumps = 0;
             _isJumping = false;
             falling = false;
         }
 
+        // Update variables if we have to jump
         if (_jumpInputValue) {
             if (_jumps != maxJumps)
             {
@@ -304,16 +303,14 @@ public class Player : MonoBehaviour
 
         if (wantsToJump && (_yPositionState == YPosState.NONE || _yPositionState == YPosState.FALLING))
         {
-            // JUMP
+            // Jump
             _rigidbody.velocity = Vector2.up * JumpPower[0] * Time.fixedDeltaTime * -Physics2D.gravity.y;
             _yPositionState = YPosState.ASCENDING;
-            Debug.Log("Saute!");
         } else if (falling && (_yPositionState == YPosState.NONE || _yPositionState == YPosState.ASCENDING))
         {
-            // FALL
+            // Fall
             _rigidbody.velocity = Vector2.up * JumpPower[1] * Time.fixedDeltaTime * Physics2D.gravity.y;
             _yPositionState = YPosState.FALLING;
-            Debug.Log("Tombe!");
         }
 
         _animator.SetBool("jump", _isJumping);
@@ -321,10 +318,10 @@ public class Player : MonoBehaviour
 
     public void Propulse(float propulsionPower)
     {
+        // Trampoline propulsion
         _rigidbody.velocity = Vector3.up * propulsionPower * Time.fixedDeltaTime;
         _yPositionState = YPosState.NONE;
         _jumps = 0;
-        Debug.Log("Propulse!");
     }
 
     void _Crouch()
@@ -442,12 +439,21 @@ public class Player : MonoBehaviour
         _rigidbody.freezeRotation = true;
     }
 
+    public void Spawn(Vector3 position)
+    {
+        transform.position = position;
+        StartCoroutine(Appear());
+    }
+
     IEnumerator Appear()
     {
+        _spriteRenderer.enabled = true;
         _FreezePosition();
         _state = States.APPEARING;
+        _animator.SetBool("appear", true);
         yield return new WaitForSeconds(1f / appearSpeedAnimation);
         _state = States.READY;
+        _animator.SetBool("appear", false);
         _UnFreezePosition();
     }
     IEnumerator Disappear()
