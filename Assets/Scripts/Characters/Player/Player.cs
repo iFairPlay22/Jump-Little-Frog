@@ -43,11 +43,10 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     [Range(0, 3)]
-    int maxSuccessiveJumps = 2;
+    int maxJumps = 3;
 
     [SerializeField]
-    [Range(300, 500)]
-    float jumpPower = 300f;
+    Vector2 JumpPower = new Vector2(2.5f, 2.5f);
 
     [Header("Slice walls")]
     [SerializeField]
@@ -62,7 +61,7 @@ public class Player : MonoBehaviour
     float wallCheckRadius = 0.15f;
 
     [Header("Quick fall")]
-    public float quickFallVelocity = 5;
+    public float quickFallVelocity = 3.5f;
 
     [Header("Crouch")]
 
@@ -137,9 +136,13 @@ public class Player : MonoBehaviour
     bool _isCrouching = false;
     [SerializeField]
     bool _isJumping = false;
+    
+    enum YPosState { NONE, ASCENDING, FALLING, FALLING_QUICKLY }
+    [SerializeField]
+    YPosState _yPositionState = YPosState.NONE;
     [SerializeField]
     bool _isSliding = false;
-    int _successiveJumps = 0;
+    int _jumps = 0;
     #endregion
 
     #endregion
@@ -211,7 +214,7 @@ public class Player : MonoBehaviour
         _GroundCheck();
         _SliceWallsCheck();
 
-        _Jump();
+        _ManageYMovement();
         _QuickFall();
         _Crouch();
         _Move();
@@ -247,7 +250,7 @@ public class Player : MonoBehaviour
 
         if (isSliding)
         {
-            _successiveJumps = 1;
+            _jumps = 1;
             _isSliding = true;
         } else
         {
@@ -264,29 +267,53 @@ public class Player : MonoBehaviour
 
         if (ok)
         {
-            _rigidbody.velocity *= new Vector2(-quickFallVelocity, _rigidbody.velocity.y);
+            _rigidbody.velocity *= Vector2.up * quickFallVelocity * (isFalling ? 1 : -1);
             _quickFallInputValue = false;
+            _yPositionState = YPosState.FALLING_QUICKLY;
         }
     }
 
-    void _Jump()
+    void _ManageYMovement()
     {
-        // Jump
+        bool wantsToJump = false;
+        bool falling = _rigidbody.velocity.y < 2f;
+        Debug.Log(_rigidbody.velocity.y);
+
+        if (falling && _isGrounded)
+        {
+            Debug.Log("Au sol");
+            _yPositionState = YPosState.NONE;
+            _jumps = 0;
+            _isJumping = false;
+            falling = false;
+        }
+
         if (_jumpInputValue) {
-            if (_successiveJumps != maxSuccessiveJumps)
+            if (_jumps != maxJumps)
             {
-                _isGrounded = false;
+                _yPositionState = YPosState.NONE;
+                _jumps++;
                 _isJumping = true;
-                _successiveJumps++;
-                _rigidbody.velocity = Vector3.up * jumpPower * Time.fixedDeltaTime;
+                wantsToJump = true;
+                falling = false;
+                _isGrounded = false;
                 _sfxManager.Play(jumpAudioClip);
             }
             _jumpInputValue = false;
         }
-        
-        if (_isGrounded) {
-            _successiveJumps = 0;
-            _isJumping = false;
+
+        if (wantsToJump && (_yPositionState == YPosState.NONE || _yPositionState == YPosState.FALLING))
+        {
+            // JUMP
+            _rigidbody.velocity = Vector2.up * JumpPower[0] * Time.fixedDeltaTime * -Physics2D.gravity.y;
+            _yPositionState = YPosState.ASCENDING;
+            Debug.Log("Saute!");
+        } else if (falling && (_yPositionState == YPosState.NONE || _yPositionState == YPosState.ASCENDING))
+        {
+            // FALL
+            _rigidbody.velocity = Vector2.up * JumpPower[1] * Time.fixedDeltaTime * Physics2D.gravity.y;
+            _yPositionState = YPosState.FALLING;
+            Debug.Log("Tombe!");
         }
 
         _animator.SetBool("jump", _isJumping);
@@ -295,7 +322,9 @@ public class Player : MonoBehaviour
     public void Propulse(float propulsionPower)
     {
         _rigidbody.velocity = Vector3.up * propulsionPower * Time.fixedDeltaTime;
-        _successiveJumps = 0;
+        _yPositionState = YPosState.NONE;
+        _jumps = 0;
+        Debug.Log("Propulse!");
     }
 
     void _Crouch()
