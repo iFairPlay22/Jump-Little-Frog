@@ -55,7 +55,7 @@ public class RaycastFollowHPlayer : RaycastDetection
         if (Vector3.Distance(next, _target) <= 0.3f)
             _currentState = States.WAITING;
 
-        // Follow in direction of the Target
+        // Flip in direction of the Target
         transform.localScale = new Vector3(_target.x > next.x ? -1 : 1, 1, 1);
     }
 }

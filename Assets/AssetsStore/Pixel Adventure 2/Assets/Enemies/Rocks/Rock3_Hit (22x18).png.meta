@@ -39,6 +39,7 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
+  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -220,6 +221,12 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    nameFileIdTable:
+      Rock3_Hit (22x18)_1: 7273987600587635414
+      Rock3_Hit (22x18)_2: 7348895378744956227
+      Rock3_Hit (22x18)_4: 6105641186539746093
+      Rock3_Hit (22x18)_3: 1771045881316635340
+      Rock3_Hit (22x18)_0: -4494083210613878959
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

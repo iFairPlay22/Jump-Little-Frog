@@ -66,6 +66,7 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
+  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -436,6 +437,21 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    nameFileIdTable:
+      Rock2_Run (32x28)_3: -7662325065483771763
+      Rock2_Run (32x28)_9: 5696246588668737563
+      Rock2_Run (32x28)_8: -5285559993425611679
+      Rock2_Run (32x28)_1: 9016932863708838467
+      Rock2_Run (32x28)_6: -239047365011775978
+      Rock2_Run (32x28)_2: 4031765010434451189
+      Rock2_Run (32x28)_10: 4356848656896060108
+      Rock2_Run (32x28)_4: -3881371739765264676
+      Rock2_Run (32x28)_5: -2402131140999567694
+      Rock2_Run (32x28)_12: -8666900771798489472
+      Rock2_Run (32x28)_11: 985846852170845572
+      Rock2_Run (32x28)_13: -1718279605023553000
+      Rock2_Run (32x28)_7: 6175613209864557959
+      Rock2_Run (32x28)_0: 4243741462996495119
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

@@ -45,6 +45,7 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
+  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -268,6 +269,14 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    nameFileIdTable:
+      Hit Wall 2 (52x54)_1: 5770725570484186487
+      Hit Wall 2 (52x54)_2: 4283841772819548759
+      Hit Wall 2 (52x54)_4: -7385279612560576816
+      Hit Wall 2 (52x54)_0: 2053894622648911956
+      Hit Wall 2 (52x54)_3: 7871542433951501476
+      Hit Wall 2 (52x54)_5: -4483337734888743808
+      Hit Wall 2 (52x54)_6: -2027179826355469474
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
