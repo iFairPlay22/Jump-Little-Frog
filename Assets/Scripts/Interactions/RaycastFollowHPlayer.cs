@@ -4,6 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(SfxManager))]
 public class RaycastFollowHPlayer : RaycastDetection
 {
     [Header("Run")]
@@ -14,13 +15,20 @@ public class RaycastFollowHPlayer : RaycastDetection
     Vector3 _target;
     Animator _animator;
     enum States { WAITING, RUNNING }
-    [SerializeField]
 
+    [SerializeField]
     States _currentState = States.WAITING;
+
+    [Header("SFX")]
+    [SerializeField]
+    AudioClip runningAudioClip;
+    bool _canPlaySfx = true;
+    SfxManager _sfxManager;
 
     private void Awake()
     {
         _animator = GetComponent<Animator>();
+        _sfxManager = GetComponent<SfxManager>();
     }
 
     protected override bool ShoudDetectRaycastCollisions()
@@ -46,6 +54,13 @@ public class RaycastFollowHPlayer : RaycastDetection
 
     void _Move()
     {
+        if (runningAudioClip && _canPlaySfx)
+        {
+            _sfxManager.Play(runningAudioClip);
+            _canPlaySfx = false;
+        }
+            
+
         // Follow the Target
         Vector3 current = transform.position;
         Vector3 next = Vector3.MoveTowards(current, _target, RunningSpeed * Time.deltaTime);
@@ -53,7 +68,10 @@ public class RaycastFollowHPlayer : RaycastDetection
         transform.position = next;
 
         if (Vector3.Distance(next, _target) <= 0.3f)
+        {
             _currentState = States.WAITING;
+            _canPlaySfx = true;
+        }
 
         // Flip in direction of the Target
         transform.localScale = new Vector3(_target.x > next.x ? -1 : 1, 1, 1);

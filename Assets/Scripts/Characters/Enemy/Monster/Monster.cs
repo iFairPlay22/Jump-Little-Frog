@@ -5,14 +5,19 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class Monster : MonoBehaviour
 {
+    #region Variables
+    [Header("General")]
     [SerializeField]
     [Range(1, 10)]
     int Life = 5;
     bool _vulnerable = false;
 
+    [Header("Meteor rain")]
     [SerializeField]
-    [Range(0f, 5f)]
-    public float IdleTime;
+    ParticleSystem MeteorRainPrefab;
+
+    [SerializeField]
+    Transform MeteorRainSummonPoint;
 
     Transform _target;
     Animator _animator;
@@ -22,7 +27,22 @@ public class Monster : MonoBehaviour
         _animator = GetComponent<Animator>();
         _target = GameObject.FindGameObjectsWithTag("Player")[0].transform;
     }
+    #endregion
 
+    #region Meteor Rain
+    public GameObject SummonMeteorRain()
+    {
+        // Create projectile
+        GameObject meteorRain = Instantiate(MeteorRainPrefab.gameObject);
+        meteorRain.transform.SetParent(MeteorRainSummonPoint.transform);
+        meteorRain.SetActive(true);
+
+        return meteorRain;
+    }
+
+    #endregion
+
+    #region Movement
     public void Move(Vector3 destination, float speed)
     {
         // Follow the Target
@@ -38,7 +58,9 @@ public class Monster : MonoBehaviour
     {
         transform.localScale = new Vector3(_target.position.x > transform.position.x ? -1 : 1, 1, 1);
     }
+    #endregion
 
+    #region States
     public void IdleToRandomAttack()
     {
         _ResetTriggers();
@@ -51,7 +73,7 @@ public class Monster : MonoBehaviour
                 _animator.SetTrigger("TakeArm");
                 break;
             case 1:
-                _animator.SetTrigger("UpAttack");
+                _animator.SetTrigger("StartUpAttack");
                 break;
             case 2:
                 _animator.SetTrigger("RightAttack");
@@ -81,6 +103,9 @@ public class Monster : MonoBehaviour
         _animator.ResetTrigger("RightAttack");
         _animator.ResetTrigger("MiddleAttack");
     }
+    #endregion
+
+    #region Life
 
     public void SetVulnerable(bool v)
     {
@@ -109,4 +134,5 @@ public class Monster : MonoBehaviour
     {
         _animator.SetTrigger("Die");
     }
+    #endregion
 }

@@ -3,17 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[RequireComponent(typeof(SfxManager))]
 public class LevelManager : MonoBehaviour
 {
     Vector3 _initialSpawnPoint;
     Vector3 _lastSpawnPoint;
     Vector3 _currentSpawnPoint;
 
+    [Header("Spawn")]
     [SerializeField]
     float TimeBeforeSpawn = 2;
 
+    [Header("SFX")]
+
+    [SerializeField]
+    AudioClip winAudioClip;
+
+    [SerializeField]
+    AudioClip looseAudioClip;
+
+    SfxManager _sfxManager;
+
     void Awake()
     {
+        _sfxManager = GetComponent<SfxManager>();
         _initialSpawnPoint = FindObjectOfType<StartCheckPoint>().GetComponent<Spawn>().GetSpawnPoint();
         _lastSpawnPoint = _initialSpawnPoint;
         _SpawnInInitialCheckPoint();
@@ -26,13 +39,14 @@ public class LevelManager : MonoBehaviour
 
     public void Victory()
     {
+        _sfxManager.Play(winAudioClip);
         _ReloadCurrentScene();
         _SpawnInInitialCheckPoint();
     }
 
     public void Defeat()
     {
-        Debug.Log("Defeat");
+        _sfxManager.Play(looseAudioClip);
         _ReloadCurrentScene();
         _SpawnInLastCheckPoint();
     }

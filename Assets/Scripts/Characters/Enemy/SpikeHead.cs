@@ -3,6 +3,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(SfxManager))]
 public class SpikeHead : RaycastDetection
 {
     #region Serializable Fields
@@ -20,6 +21,12 @@ public class SpikeHead : RaycastDetection
     [SerializeField]
     [Range(1f, 10f)]
     float Speed = 5.0f;
+
+    [Header("SFX")]
+
+    [SerializeField]
+    AudioClip hurtsAudioClip;
+    SfxManager _sfxManager;
 
     #endregion
 
@@ -44,6 +51,7 @@ public class SpikeHead : RaycastDetection
 
     private void Awake()
     {
+        _sfxManager = GetComponent<SfxManager>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _animator = GetComponent<Animator>();
         _animator.SetFloat("collisionAnimationSpeed", TimeForCollisionAnimation);
@@ -112,6 +120,9 @@ public class SpikeHead : RaycastDetection
         // Si on se rapproche grandement du vecteur destination
         if (Mathf.Abs(Vector3.Distance(currentPosition, _moveTo.Value)) <= 0.1f)
         {
+            // SFX
+            _sfxManager.Play(hurtsAudioClip);
+
             // On joue l'animation de collision
             _animator.Play("SpikeHead_" + _onCollisionAnimationName);
             _onCollisionAnimationName = "";

@@ -87,7 +87,6 @@ public class Player : MonoBehaviour
     [Range(0f, 2f)]
     float disappearSpeedAnimation = 0.8f;
 
-    [Header("SFX")]
     [SerializeField]
     ParticleSystem movingParticleSystem;
 
@@ -100,6 +99,12 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     AudioClip jumpAudioClip;
+
+    [SerializeField]
+    AudioClip quickFallAudioClip;
+
+    [SerializeField]
+    AudioClip hurtsAudioClip;
 
     [Header("Debug")]
     [SerializeField]
@@ -266,6 +271,7 @@ public class Player : MonoBehaviour
 
         if (ok)
         {
+            _sfxManager.Play(quickFallAudioClip);
             _rigidbody.velocity *= Vector2.up * quickFallVelocity * (isFalling ? 1 : -1);
             _quickFallInputValue = false;
             _yPositionState = YPosState.FALLING_QUICKLY;
@@ -456,6 +462,7 @@ public class Player : MonoBehaviour
         _animator.SetBool("appear", false);
         _UnFreezePosition();
     }
+
     IEnumerator Disappear()
     {
         _FreezePosition();
@@ -464,6 +471,11 @@ public class Player : MonoBehaviour
         _animator.Play("Fox_disappear");
         yield return new WaitForSeconds(1f / disappearSpeedAnimation);
         FindObjectOfType<LevelManager>().Defeat();
+    }
+
+    public void Hurts()
+    {
+        _sfxManager.Play(hurtsAudioClip);
     }
 
     public void Die() 

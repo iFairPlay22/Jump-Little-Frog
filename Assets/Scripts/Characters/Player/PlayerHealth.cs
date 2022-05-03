@@ -12,6 +12,13 @@ public class PlayerHealth : MonoBehaviour
 
     int _livesRemaining;
 
+    Player _player;
+
+    void Awake()
+    {
+        _player = FindObjectOfType<Player>();
+    }
+
     void Start()
     {
         RestartHealth();
@@ -24,6 +31,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void ReduceHealth(int damages)
     {
+        _player.Hurts();
         _livesRemaining = Mathf.Max(_livesRemaining - damages, 0);
         _UpdateLifeUI();
     }
@@ -36,6 +44,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void DestroyHealth()
     {
+        _player.Hurts();
         _livesRemaining = 0;
         _UpdateLifeUI();
     }
@@ -50,7 +59,7 @@ public class PlayerHealth : MonoBehaviour
     {
         if (_livesRemaining == 0)
         {
-            FindObjectOfType<Player>().Die();
+            _player.Die();
         }
 
         LifeSlicedImage.fillAmount = ((float)_livesRemaining) / ((float)_maxLives);

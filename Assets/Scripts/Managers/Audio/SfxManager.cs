@@ -26,7 +26,7 @@ public class SfxManager : MonoBehaviour
 
         if (_audioSource.isPlaying)
         {
-            Debug.LogWarning("[SFX] Audio source is already playing " + _audioSource.clip.name + " SFX");
+            // Debug.LogWarning("[SFX] Audio source is already playing " + _audioSource.clip.name + " SFX");
             _audioSource.Stop();
         }
 
